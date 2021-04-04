@@ -1,12 +1,16 @@
 
 ext.versions = [
     coroutines  : "1.4.3",
-    retrofit    : "2.8.0"
+    retrofit    : "2.8.0",
+    room        : "2.2.6"
 ]
 
 ext.libraries = [
     coroutines          : "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutines}",
     coroutines_android  : "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.coroutines}",
     retrofit            : "com.squareup.retrofit2:retrofit:${versions.retrofit}",
-    retrofit_gson       : "com.squareup.retrofit2:converter-gson:${versions.retrofit}"
+    retrofit_gson       : "com.squareup.retrofit2:converter-gson:${versions.retrofit}",
+    room                : "androidx.room:room-runtime:${versions.room}",
+    room_compiler       : "androidx.room:room-compiler:${versions.room}",
+    room_ktx            : "androidx.room:room-ktx:${versions.room}"
 ]

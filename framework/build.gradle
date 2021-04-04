@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
+    id 'kotlin-kapt'
 }
 
 apply from: "../gradle_scripts/gradle-dependencies.gradle"
@@ -43,6 +44,9 @@ dependencies {
     implementation libraries.coroutines_android
     implementation libraries.retrofit
     implementation libraries.retrofit_gson
+    implementation libraries.room
+    implementation libraries.room_ktx
+    kapt libraries.room_compiler
 
     // Test
     testImplementation 'junit:junit:4.+'
