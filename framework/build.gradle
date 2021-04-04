@@ -41,6 +41,8 @@ dependencies {
     api project(path: ':usecase')
     implementation libraries.coroutines
     implementation libraries.coroutines_android
+    implementation libraries.retrofit
+    implementation libraries.retrofit_gson
 
     // Test
     testImplementation 'junit:junit:4.+'
