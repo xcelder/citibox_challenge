@@ -1,0 +1,9 @@
+
+ext.versions = [
+    coroutines: "1.4.3"
+]
+
+ext.libraries = [
+    coroutines: "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutines}",
+    coroutines_android: "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.coroutines}"
+]

@@ -1,0 +1,6 @@
+include ':framework'
+include ':usecase'
+include ':data'
+include ':domain'
+include ':app'
+rootProject.name = "Citibox challenge"
