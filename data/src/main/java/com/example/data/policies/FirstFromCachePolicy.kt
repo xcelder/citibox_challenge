@@ -2,9 +2,9 @@ package com.example.data.policies
 
 suspend fun <Entity> getDataFirstFromCache(
     isStored: suspend () -> Boolean,
-    getFromCache: suspend () -> List<Entity>,
-    storeInCache: suspend (List<Entity>) -> Unit,
-    getFromNetwork: suspend () -> List<Entity>
+    getFromCache: suspend () -> Entity,
+    storeInCache: suspend (Entity) -> Unit,
+    getFromNetwork: suspend () -> Entity
 ) =
     if (isStored()) {
         getFromCache()

@@ -4,6 +4,7 @@ import com.example.data.characters.datasources.InMemoryCharactersDataSource
 import com.example.data.characters.datasources.NetworkCharactersDataSource
 import com.example.data.policies.getDataFirstFromCache
 import com.example.domain.entities.Character
+import com.example.domain.entities.CharactersPage
 import com.example.domain.repositories.CharactersRepository
 
 internal class CharactersRepositoryImpl(
@@ -11,10 +12,10 @@ internal class CharactersRepositoryImpl(
     private val networkCharactersDataSource: NetworkCharactersDataSource
 ) : CharactersRepository {
 
-    override suspend fun getCharactersPage(page: Int): List<Character> = getDataFirstFromCache(
+    override suspend fun getCharactersPage(page: Int): CharactersPage = getDataFirstFromCache(
         isStored = { inMemoryCharactersDataSource.isCharactersPageStored(page) },
         getFromCache = { inMemoryCharactersDataSource.getCharactersPage(page) },
-        storeInCache = { inMemoryCharactersDataSource.storeCharactersPage(page, it) },
+        storeInCache = { inMemoryCharactersDataSource.storeCharactersPage(page, it.characters) },
         getFromNetwork = { networkCharactersDataSource.getCharactersPage(page) }
     )
 

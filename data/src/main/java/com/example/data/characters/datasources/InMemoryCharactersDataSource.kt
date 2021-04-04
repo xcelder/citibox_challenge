@@ -1,10 +1,11 @@
 package com.example.data.characters.datasources
 
 import com.example.domain.entities.Character
+import com.example.domain.entities.CharactersPage
 
 interface InMemoryCharactersDataSource {
 
-    suspend fun getCharactersPage(page: Int): List<Character>
+    suspend fun getCharactersPage(page: Int): CharactersPage
 
     suspend fun findCharactersByName(search: String): List<Character>
 
