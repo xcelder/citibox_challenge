@@ -7,7 +7,7 @@ import com.example.framework.network.api.CharactersApi
 import com.example.framework.network.models.toDomainCharacter
 import java.lang.IllegalArgumentException
 
-class NetworkCharactersDataSourceImpl(
+internal class NetworkCharactersDataSourceImpl(
     private val charactersApi: CharactersApi
 ) : NetworkCharactersDataSource {
 

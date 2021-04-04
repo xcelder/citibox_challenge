@@ -1,7 +1,6 @@
 package com.example.framework.network.api
 
 import com.example.framework.network.models.CharactersResponse
-import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 
