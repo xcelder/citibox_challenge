@@ -1,4 +1,4 @@
-package com.example.data.datasources
+package com.example.data.characters.datasources
 
 import com.example.domain.entities.Character
 

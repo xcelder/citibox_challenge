@@ -1,8 +1,8 @@
-package com.example.domain.repositories
+package com.example.data.episodes.datasources
 
 import com.example.domain.entities.Episode
 
-interface EpisodesRepository {
+interface NetworkEpisodesDataSource {
 
     suspend fun getEpisodes(episodeNumbers: List<Int>): List<Episode>
 }

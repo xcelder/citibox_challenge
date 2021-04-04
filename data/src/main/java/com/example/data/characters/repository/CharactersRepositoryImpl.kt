@@ -1,7 +1,7 @@
-package com.example.data.repositories
+package com.example.data.characters.repository
 
-import com.example.data.datasources.InMemoryCharactersDataSource
-import com.example.data.datasources.NetworkCharactersDataSource
+import com.example.data.characters.datasources.InMemoryCharactersDataSource
+import com.example.data.characters.datasources.NetworkCharactersDataSource
 import com.example.data.policies.getDataFirstFromCache
 import com.example.domain.entities.Character
 import com.example.domain.repositories.CharactersRepository
