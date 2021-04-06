@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Citibox challenge</string>
+    <string name="avatar_content_description">Character´s avatar</string>
+    <string name="characters_title">Characters</string>
 </resources>

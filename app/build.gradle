@@ -18,6 +18,10 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    buildFeatures {
+        viewBinding true
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -45,6 +49,10 @@ dependencies {
     implementation project(path: ':framework')
     implementation libraries.coroutines
     implementation libraries.coroutines_android
+    implementation libraries.koin_android
+    implementation libraries.koin_viewmodel
+    implementation libraries.navigation_fragment
+    implementation libraries.navigation_ui
 
     // Test
     testImplementation 'junit:junit:4.+'

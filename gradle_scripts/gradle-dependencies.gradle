@@ -3,7 +3,8 @@ ext.versions = [
     coroutines  : "1.4.3",
     retrofit    : "2.8.0",
     room        : "2.2.6",
-    koin        : "2.2.2"
+    koin        : "2.2.2",
+    navigation  : "2.3.4"
 ]
 
 ext.libraries = [
@@ -14,5 +15,9 @@ ext.libraries = [
     room                : "androidx.room:room-runtime:${versions.room}",
     room_compiler       : "androidx.room:room-compiler:${versions.room}",
     room_ktx            : "androidx.room:room-ktx:${versions.room}",
-    koin                : "org.koin:koin-core:${versions.koin}"
+    koin                : "org.koin:koin-core:${versions.koin}",
+    koin_android        : "org.koin:koin-android:${versions.koin}",
+    koin_viewmodel      : "org.koin:koin-android-viewmodel:${versions.koin}",
+    navigation_fragment : "androidx.navigation:navigation-fragment-ktx:${versions.navigation}",
+    navigation_ui       : "androidx.navigation:navigation-ui-ktx:${versions.navigation}"
 ]
