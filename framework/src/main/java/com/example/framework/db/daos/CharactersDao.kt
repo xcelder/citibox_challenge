@@ -1,23 +1,41 @@
 package com.example.framework.db.daos
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.example.framework.db.entities.DbCharacter
+import com.example.framework.db.entities.DbCharactersPage
+import com.example.framework.db.entities.DbCharactersPageCrossRef
+import com.example.framework.db.entities.DbPage
 
 @Dao
-interface CharactersDao {
+internal abstract class CharactersDao {
 
-    @Query("SELECT COUNT(*) FROM character WHERE page = :page")
-    fun itemsInPage(page: Int): Int
+    @Query("SELECT * FROM page WHERE page = :page")
+    abstract suspend fun getPage(page: Int): List<DbPage>
 
-    @Query("SELECT * FROM character WHERE page = :page")
-    fun getCharactersPage(page: Int): List<DbCharacter>
+    @Transaction
+    @Query("SELECT * FROM page WHERE page = :page")
+    abstract suspend fun getCharactersPage(page: Int): DbCharactersPage
 
     @Query("SELECT * FROM character WHERE name LIKE :name")
-    fun findCharactersByName(name: String): List<DbCharacter>
+    abstract suspend fun findCharactersByName(name: String): List<DbCharacter>
+
+    suspend fun insertCharactersPage(charactersPage: DbCharactersPage) {
+        val pageId = insertPage(charactersPage.page)
+        val charactersId = insertCharacters(charactersPage.characters)
+
+        val charactersPageCrossRefList = charactersId.map {
+            DbCharactersPageCrossRef(it, pageId)
+        }
+
+        insertCharactersPageCrossRef(charactersPageCrossRefList)
+    }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertCharacters(characters: List<DbCharacter>)
+    abstract suspend fun insertCharacters(characters: List<DbCharacter>): List<Long>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract suspend fun insertPage(page: DbPage): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract suspend fun insertCharactersPageCrossRef(charactersPageCrossRef: List<DbCharactersPageCrossRef>)
 }

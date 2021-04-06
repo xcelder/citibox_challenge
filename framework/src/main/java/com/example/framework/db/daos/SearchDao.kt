@@ -7,11 +7,11 @@ import androidx.room.Query
 import com.example.framework.db.entities.DbSearch
 
 @Dao
-interface SearchDao {
+internal interface SearchDao {
 
-    @Query("SELECT COUNT(*) FROM search WHERE search LIKE :search")
-    fun itemsWithSearch(search: String): Int
+    @Query("SELECT * FROM search WHERE :search LIKE search")
+    suspend fun getSearch(search: String): List<DbSearch>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertSearch(search: DbSearch)
+    suspend fun insertSearch(search: DbSearch)
 }
