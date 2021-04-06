@@ -47,6 +47,7 @@ dependencies {
     implementation libraries.room
     implementation libraries.room_ktx
     kapt libraries.room_compiler
+    api libraries.koin
 
     // Test
     testImplementation 'junit:junit:4.+'

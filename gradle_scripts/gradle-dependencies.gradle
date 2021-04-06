@@ -2,7 +2,8 @@
 ext.versions = [
     coroutines  : "1.4.3",
     retrofit    : "2.8.0",
-    room        : "2.2.6"
+    room        : "2.2.6",
+    koin        : "2.2.2"
 ]
 
 ext.libraries = [
@@ -12,5 +13,6 @@ ext.libraries = [
     retrofit_gson       : "com.squareup.retrofit2:converter-gson:${versions.retrofit}",
     room                : "androidx.room:room-runtime:${versions.room}",
     room_compiler       : "androidx.room:room-compiler:${versions.room}",
-    room_ktx            : "androidx.room:room-ktx:${versions.room}"
+    room_ktx            : "androidx.room:room-ktx:${versions.room}",
+    koin                : "org.koin:koin-core:${versions.koin}"
 ]
