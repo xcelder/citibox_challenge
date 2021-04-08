@@ -2,8 +2,8 @@ package com.example.framework.sources.db.entities
 
 import androidx.room.Entity
 
-@Entity(primaryKeys = ["characterId", "page"])
+@Entity(primaryKeys = ["characterId", "pageId"])
 internal data class DbCharactersPageCrossRef(
     val characterId: Long,
-    val page: Long
+    val pageId: Long
 )

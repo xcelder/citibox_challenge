@@ -6,7 +6,6 @@ import com.example.domain.entities.CharactersPage
 import com.example.framework.sources.db.daos.CharactersDao
 import com.example.framework.sources.db.daos.SearchDao
 import com.example.framework.sources.db.entities.*
-import com.example.framework.sources.db.entities.dbCharacterFromDomainCharacter
 import com.example.framework.sources.db.entities.toDomainCharacter
 
 internal class InMemoryCharacterDataSourceImpl(
@@ -23,7 +22,7 @@ internal class InMemoryCharacterDataSourceImpl(
         charactersDao.findCharactersByName(search).map { it.toDomainCharacter() }
 
     override suspend fun storeCharactersPage(page: Int, characters: List<Character>) {
-        val dbCharacters = characters.map { dbCharacterFromDomainCharacter(it) }
+        val dbCharacters = characters.map { it.toDbCharacter() }
 
         val dbCharactersPage = DbCharactersPage(
             page = DbPage(page = page),
@@ -34,7 +33,7 @@ internal class InMemoryCharacterDataSourceImpl(
     }
 
     override suspend fun storeCharactersSearch(search: String, characters: List<Character>) {
-        val dbCharacters = characters.map { dbCharacterFromDomainCharacter(it) }
+        val dbCharacters = characters.map { it.toDbCharacter() }
 
         charactersDao.insertCharacters(dbCharacters)
         searchDao.insertSearch(DbSearch(search = search))

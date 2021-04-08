@@ -2,4 +2,6 @@
     <string name="app_name">Citibox challenge</string>
     <string name="avatar_content_description">Character´s avatar</string>
     <string name="characters_title">Characters</string>
+    <string name="characters_error_message">Error loading characters, please try again later</string>
+    <string name="positive_button">OK</string>
 </resources>

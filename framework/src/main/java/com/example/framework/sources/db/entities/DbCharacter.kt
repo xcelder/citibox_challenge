@@ -1,12 +1,15 @@
 package com.example.framework.sources.db.entities
 
-import androidx.room.ColumnInfo
-import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.*
 import com.example.domain.entities.Character
 
-@Entity(tableName = "character")
+@Entity(
+    tableName = "character",
+    indices = [Index(
+        value = ["name", "species", "type", "location_name"],
+        unique = true
+    )]
+)
 internal data class DbCharacter(
     @PrimaryKey(autoGenerate = true) val characterId: Long = 0,
     @ColumnInfo(name = "name") val name: String,
@@ -26,13 +29,11 @@ internal fun DbCharacter.toDomainCharacter() = Character(
     episode = episode
 )
 
-internal fun dbCharacterFromDomainCharacter(character: Character) = with(character) {
-    DbCharacter(
-        name = name,
-        imageUrl = imageUrl,
-        location = dbLocationFromDomainLocation(location),
-        species = species,
-        type = type,
-        episode = episode
-    )
-}
+internal fun Character.toDbCharacter() = DbCharacter(
+    name = name,
+    imageUrl = imageUrl,
+    location = dbLocationFromDomainLocation(location),
+    species = species,
+    type = type,
+    episode = episode
+)

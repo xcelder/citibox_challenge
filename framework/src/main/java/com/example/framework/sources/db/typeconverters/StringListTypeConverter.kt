@@ -7,8 +7,10 @@ import com.google.gson.reflect.TypeToken
 internal class StringListTypeConverter {
 
     @TypeConverter
-    fun fromString(jsonValue: String): List<String> =
-        Gson().fromJson<List<String>>(jsonValue, object : TypeToken<List<String>>() {}.javaClass)
+    fun fromString(jsonValue: String?): List<String> =
+        jsonValue?.let {
+            Gson().fromJson<List<String>>(it, object : TypeToken<List<String>>() {}.javaClass)
+        } ?: emptyList()
 
     @TypeConverter
     fun toString(list: List<String>): String = Gson().toJson(list)

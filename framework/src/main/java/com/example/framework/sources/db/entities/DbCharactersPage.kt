@@ -7,7 +7,7 @@ import androidx.room.Relation
 internal data class DbCharactersPage(
     @Embedded val page: DbPage,
     @Relation(
-        parentColumn = "page",
+        parentColumn = "pageId",
         entityColumn = "characterId",
         associateBy = Junction(DbCharactersPageCrossRef::class)
     )

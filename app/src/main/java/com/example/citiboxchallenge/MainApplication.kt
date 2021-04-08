@@ -1,6 +1,7 @@
 package com.example.citiboxchallenge
 
 import android.app.Application
+import com.example.citiboxchallenge.presentation.di.uiModule
 import com.example.framework.di.dataSourceModule
 import com.example.framework.di.dbModule
 import com.example.framework.di.networkModule
@@ -17,7 +18,7 @@ class MainApplication : Application() {
         startKoin {
             androidLogger()
             androidContext(this@MainApplication)
-            modules(dbModule, networkModule, dataSourceModule, repositoryModule)
+            modules(dbModule, networkModule, dataSourceModule, repositoryModule, uiModule)
         }
     }
 }
