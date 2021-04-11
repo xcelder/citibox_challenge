@@ -48,7 +48,7 @@ class GetCharacterMeetUp(
             }
             .sortedWith { old, new -> if (betterMatchConditions.any { it(old, new) }) 1 else -1 }
 
-        return possibleMatchCharacters.last().let { characterMatch ->
+        return possibleMatchCharacters.first().let { characterMatch ->
             CharactersMeetUp(
                 characters = character to characterMatch.character,
                 location = character.location,
