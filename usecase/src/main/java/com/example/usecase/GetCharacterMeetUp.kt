@@ -21,17 +21,27 @@ class GetCharacterMeetUp(
 
     private val betterMatchConditions: List<(CharacterWithEpisodes, CharacterWithEpisodes) -> Boolean> =
         listOf(
-            { old, new -> new.matchEpisodesCount > old.matchEpisodesCount },
-            { old, new -> new.matchEpisodesCount == old.matchEpisodesCount && new.olderEpisodeTime < old.olderEpisodeTime },
             { old, new ->
-                new.matchEpisodesCount == old.matchEpisodesCount &&
-                    new.olderEpisodeTime == old.olderEpisodeTime &&
-                    new.newerEpisodeTime < old.newerEpisodeTime
+                new.character.location.url == old.character.location.url &&
+                        new.matchEpisodesCount > old.matchEpisodesCount
             },
-            { old, new -> new.matchEpisodesCount == old.matchEpisodesCount &&
-                    new.olderEpisodeTime == old.olderEpisodeTime &&
-                    new.newerEpisodeTime == old.newerEpisodeTime &&
-                    new.character.id < old.character.id
+            { old, new ->
+                new.character.location.url == old.character.location.url &&
+                        new.matchEpisodesCount == old.matchEpisodesCount &&
+                        new.olderEpisodeTime < old.olderEpisodeTime
+            },
+            { old, new ->
+                new.character.location.url == old.character.location.url &&
+                        new.matchEpisodesCount == old.matchEpisodesCount &&
+                        new.olderEpisodeTime == old.olderEpisodeTime &&
+                        new.newerEpisodeTime < old.newerEpisodeTime
+            },
+            { old, new ->
+                new.character.location.url == old.character.location.url &&
+                        new.matchEpisodesCount == old.matchEpisodesCount &&
+                        new.olderEpisodeTime == old.olderEpisodeTime &&
+                        new.newerEpisodeTime == old.newerEpisodeTime &&
+                        new.character.id < old.character.id
             }
         )
 
@@ -78,7 +88,12 @@ class GetCharacterMeetUp(
         forEach { candidate ->
             val possibleMatchVal = possibleMatch
             if (candidate.character.location.url == character.location.url) {
-                if (possibleMatchVal == null || betterMatchConditions.any { it(possibleMatchVal, candidate) }) {
+                if (possibleMatchVal == null || betterMatchConditions.any {
+                        it(
+                            possibleMatchVal,
+                            candidate
+                        )
+                    }) {
                     possibleMatch = candidate
                 } else {
                     return possibleMatchVal

@@ -24,6 +24,11 @@ class CharactersListFragment : Fragment() {
 
     private val adapter: CharacterListAdapter by lazy { CharacterListAdapter(viewModel::onCharacterSelected) }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.loadNextCharactersPage()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -38,8 +43,6 @@ class CharactersListFragment : Fragment() {
 
         setupViews()
         startListeningStateChanges()
-
-        viewModel.loadNextCharactersPage()
     }
 
     private fun setupViews() {
