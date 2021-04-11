@@ -11,7 +11,10 @@ ext.versions = [
     glide           : "4.12.0",
     junit           : "4.+",
     androidx_junit  : "1.1.2",
-    espresso        : "3.3.0"
+    espresso        : "3.3.0",
+    mockito         : "3.9.0",
+    mockito_kotlin  : "3.1.0",
+    coroutines_test : "1.4.3"
 ]
 
 ext.libraries = [
@@ -38,5 +41,8 @@ ext.libraries = [
 ext.testLibraries = [
     junit               : "junit:junit:${versions.junit}",
     androidx_junit      : "androidx.test.ext:junit:${versions.androidx_junit}",
-    espresso            : "androidx.test.espresso:espresso-core:${versions.espresso}"
+    espresso            : "androidx.test.espresso:espresso-core:${versions.espresso}",
+    mockito             : "org.mockito:mockito-core:${versions.mockito}",
+    mockito_kotlin      : "org.mockito.kotlin:mockito-kotlin:${versions.mockito_kotlin}",
+    coroutines_test     : "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.coroutines_test}"
 ]
