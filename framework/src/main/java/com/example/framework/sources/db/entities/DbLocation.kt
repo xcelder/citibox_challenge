@@ -10,6 +10,4 @@ internal data class DbLocation(
 
 internal fun DbLocation.toDomainLocation() = Location(name, url)
 
-internal fun dbLocationFromDomainLocation(location: Location) = with(location) {
-    DbLocation(name, url)
-}
+internal fun Location.toDbLocation() = DbLocation(name, url)

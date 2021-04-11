@@ -6,5 +6,18 @@
     <fragment
         android:id="@+id/charactersListFragment"
         android:name="com.example.citiboxchallenge.presentation.features.characterslist.CharactersListFragment"
-        android:label="CharactersListFragment" />
+        android:label="Characters">
+        <action
+            android:id="@+id/action_charactersListFragment_to_characterMeetUpFragment"
+            app:destination="@id/characterMeetUpFragment"
+            app:popUpTo="@id/charactersListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/characterMeetUpFragment"
+        android:name="com.example.citiboxchallenge.presentation.features.charactermeetup.CharacterMeetUpFragment"
+        android:label="Meet Up">
+        <argument
+            android:name="charactersMeetUp"
+            app:argType="com.example.domain.entities.CharactersMeetUp" />
+    </fragment>
 </navigation>

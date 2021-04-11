@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <dimen name="character_item_height">100dp</dimen>
+    <dimen name="character_list_item_height">100dp</dimen>
+    <dimen name="character_meetup_item_width">150dp</dimen>
+    <dimen name="character_meetup_item_height">200dp</dimen>
     <dimen name="margin_medium">8dp</dimen>
+    <dimen name="margin_large">16dp</dimen>
 </resources>

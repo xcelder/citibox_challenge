@@ -18,8 +18,9 @@ data class NetworkCharacter (
 )
 
 fun NetworkCharacter.toDomainCharacter() = Character(
+    id = id,
     name = name,
-    episode = episode.map { it.substringAfterLast("/")},
+    episode = episode.mapNotNull { it.substringAfterLast("/").toIntOrNull() },
     imageUrl = image,
     location = com.example.domain.entities.Location(location.name, location.url),
     species = species,

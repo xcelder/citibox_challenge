@@ -7,5 +7,5 @@ interface NetworkCharactersDataSource {
 
     suspend fun getCharactersPage(page: Int): CharactersPage
 
-    suspend fun findCharacterByName(search: String): List<Character>
+    suspend fun getCharacters(characterIds: List<String>): List<Character>
 }

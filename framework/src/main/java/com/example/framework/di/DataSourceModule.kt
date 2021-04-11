@@ -17,7 +17,7 @@ val dataSourceModule = module {
     }
 
     factory<InMemoryCharactersDataSource> {
-        InMemoryCharacterDataSourceImpl(get(), get())
+        InMemoryCharacterDataSourceImpl(get())
     }
 
     factory<NetworkEpisodesDataSource> {

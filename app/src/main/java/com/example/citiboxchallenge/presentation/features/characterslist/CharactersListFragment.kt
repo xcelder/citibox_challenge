@@ -5,24 +5,24 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.citiboxchallenge.R
 import com.example.citiboxchallenge.databinding.CharactersListFragmentBinding
 import com.example.citiboxchallenge.presentation.features.characterslist.adapter.CharacterListAdapter
-import com.example.citiboxchallenge.presentation.utils.setActionBarTitle
 import com.example.domain.entities.Character
 import kotlinx.coroutines.flow.collect
 import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class CharactersListFragment : Fragment() {
 
     private lateinit var binding: CharactersListFragmentBinding
 
-    private val viewModel: CharactersListViewModel by viewModel()
+    private val viewModel: CharactersListViewModel by viewModel{ parametersOf(findNavController()) }
 
-    private val adapter = CharacterListAdapter()
+    private val adapter: CharacterListAdapter by lazy { CharacterListAdapter(viewModel::onCharacterSelected) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,8 +35,6 @@ class CharactersListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        setActionBarTitle(R.string.characters_title)
 
         setupViews()
         startListeningStateChanges()

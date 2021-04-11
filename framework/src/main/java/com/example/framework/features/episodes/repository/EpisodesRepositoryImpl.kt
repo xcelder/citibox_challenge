@@ -12,13 +12,15 @@ internal class EpisodesRepositoryImpl(
 
     override suspend fun getEpisodes(episodeNumbers: List<Int>): List<Episode> {
         val episodesFromCache = inMemoryEpisodesDataSource.getEpisodes(episodeNumbers)
+        val episodeIdsFromCache = episodesFromCache.map { it.id }
 
-        val episodesNotRetrieved = episodesFromCache.mapNotNull {
-            if (it.id !in episodeNumbers) it.id
+            val episodesNotRetrieved = episodeNumbers.mapNotNull { episodeNumber ->
+            if (episodeNumber !in episodeIdsFromCache) episodeNumber
             else null
         }
 
         val areAllCompletelyStored = episodesNotRetrieved.isEmpty()
+
 
         return if (areAllCompletelyStored) {
             episodesFromCache

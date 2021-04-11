@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/margin_large">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/firstCharacterCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@id/hearthIcon"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:viewBindingIgnore="true">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/firstCharacterAvatar"
+                android:layout_width="@dimen/character_meetup_item_width"
+                android:layout_height="@dimen/character_meetup_item_height"
+                android:contentDescription="@string/avatar_content_description"
+                android:scaleType="centerCrop"
+                tools:src="@tools:sample/avatars" />
+
+            <TextView
+                android:id="@+id/firstCharacterName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxWidth="@dimen/character_meetup_item_width"
+                android:layout_margin="@dimen/margin_medium"
+                tools:text="@tools:sample/full_names" />
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <ImageView
+        android:id="@+id/hearthIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_hearth"
+        app:layout_constraintBottom_toBottomOf="@id/firstCharacterCard"
+        app:layout_constraintEnd_toStartOf="@id/secondCharacterCard"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toEndOf="@id/firstCharacterCard"
+        app:layout_constraintTop_toTopOf="@id/firstCharacterCard"
+        android:contentDescription="@string/avatar_content_description"
+        tools:viewBindingIgnore="true" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/secondCharacterCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toEndOf="@+id/hearthIcon"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:viewBindingIgnore="true">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/secondCharacterAvatar"
+                android:layout_width="@dimen/character_meetup_item_width"
+                android:layout_height="@dimen/character_meetup_item_height"
+                android:contentDescription="@string/avatar_content_description"
+                android:scaleType="centerCrop"
+                tools:src="@tools:sample/avatars" />
+
+            <TextView
+                android:id="@+id/secondCharacterName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxWidth="@dimen/character_meetup_item_width"
+                android:layout_margin="@dimen/margin_medium"
+                tools:text="@tools:sample/full_names" />
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/locationLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_large"
+        android:text="@string/location_label"
+        android:textAppearance="?attr/textAppearanceHeadline5"
+        app:layout_constraintStart_toStartOf="@id/firstCharacterCard"
+        app:layout_constraintTop_toBottomOf="@+id/firstCharacterCard"
+        tools:viewBindingIgnore="true" />
+
+    <TextView
+        android:id="@+id/location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_large"
+        app:layout_constraintStart_toStartOf="@id/locationLabel"
+        app:layout_constraintTop_toBottomOf="@+id/locationLabel"
+        tools:text="@tools:sample/cities" />
+
+    <TextView
+        android:id="@+id/episodesTogetherLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_large"
+        android:text="@string/episodes_together_label"
+        android:textAppearance="?attr/textAppearanceHeadline5"
+        app:layout_constraintStart_toStartOf="@id/location"
+        app:layout_constraintTop_toBottomOf="@+id/location"
+        tools:viewBindingIgnore="true" />
+
+    <TextView
+        android:id="@+id/episodesTogether"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_large"
+        app:layout_constraintStart_toStartOf="@id/episodesTogetherLabel"
+        app:layout_constraintTop_toBottomOf="@+id/episodesTogetherLabel"
+        tools:text="12" />
+
+    <TextView
+        android:id="@+id/firstMeetLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_large"
+        android:text="@string/fist_meet_label"
+        android:textAppearance="?attr/textAppearanceHeadline5"
+        app:layout_constraintStart_toStartOf="@id/episodesTogether"
+        app:layout_constraintTop_toBottomOf="@+id/episodesTogether"
+        tools:viewBindingIgnore="true" />
+
+    <TextView
+        android:id="@+id/firstMeet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_large"
+        app:layout_constraintStart_toStartOf="@id/firstMeetLabel"
+        app:layout_constraintTop_toBottomOf="@+id/firstMeetLabel"
+        tools:text="@tools:sample/date/ddmmyy" />
+
+    <TextView
+        android:id="@+id/lastMeetLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_large"
+        android:text="@string/last_meet_label"
+        android:textAppearance="?attr/textAppearanceHeadline5"
+        app:layout_constraintStart_toStartOf="@id/firstMeet"
+        app:layout_constraintTop_toBottomOf="@+id/firstMeet"
+        tools:viewBindingIgnore="true" />
+
+    <TextView
+        android:id="@+id/lastMeet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_large"
+        app:layout_constraintStart_toStartOf="@id/lastMeetLabel"
+        app:layout_constraintTop_toBottomOf="@+id/lastMeetLabel"
+        tools:text="@tools:sample/date/ddmmyy" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

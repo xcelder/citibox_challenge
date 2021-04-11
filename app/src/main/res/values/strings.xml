@@ -4,4 +4,8 @@
     <string name="characters_title">Characters</string>
     <string name="characters_error_message">Error loading characters, please try again later</string>
     <string name="positive_button">OK</string>
+    <string name="location_label">Location:</string>
+    <string name="episodes_together_label">Episodes together:</string>
+    <string name="fist_meet_label">Date of first meeting:</string>
+    <string name="last_meet_label">Date of last meeting:</string>
 </resources>

@@ -4,14 +4,24 @@ import com.example.data.episodes.datasources.NetworkEpisodesDataSource
 import com.example.domain.entities.Episode
 import com.example.framework.sources.network.api.EpisodesApi
 import com.example.framework.sources.network.models.toDomainEpisode
+import retrofit2.awaitResponse
 
 internal class NetworkEpisodesDataSourceImpl(
     private val episodesApi: EpisodesApi
 ) : NetworkEpisodesDataSource {
 
     override suspend fun getEpisodes(episodeNumbers: List<Int>): List<Episode> {
-        val result = episodesApi.getEpisodes(episodeNumbers.joinToString(separator = ","))
+        val response = episodesApi.getEpisodes(episodeNumbers.joinToString(separator = ",")).awaitResponse()
 
-        return result.map { it.toDomainEpisode() }
+        return if (response.isSuccessful) {
+            val body = response.body()
+            if (body != null && body.isNotEmpty()) {
+                body.map { it.toDomainEpisode() }
+            } else {
+                throw IllegalArgumentException("Episodes response is null or empty")
+            }
+        } else {
+            throw IllegalArgumentException("Episodes response is not successful")
+        }
     }
 }

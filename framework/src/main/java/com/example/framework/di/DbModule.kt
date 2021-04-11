@@ -24,11 +24,6 @@ val dbModule = module {
 
     factory {
         val db: AppDatabase = get()
-        db.searchDao()
-    }
-
-    factory {
-        val db: AppDatabase = get()
         db.episodesDao()
     }
 }

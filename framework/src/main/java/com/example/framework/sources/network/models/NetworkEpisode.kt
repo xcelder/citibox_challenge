@@ -18,6 +18,6 @@ data class NetworkEpisode (
 
 fun NetworkEpisode.toDomainEpisode() = Episode(
     id = id.toInt(),
-    airDate = SimpleDateFormat("mmmm dd, yyyy", Locale.getDefault()).parse(airDate) ?: Date(),
-    characters = characters
+    airDate = SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).parse(airDate) ?: Date(),
+    characters = characters.map { it.substringAfterLast("/") }
 )

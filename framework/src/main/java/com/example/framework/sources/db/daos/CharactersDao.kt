@@ -16,8 +16,11 @@ internal abstract class CharactersDao {
     @Query("SELECT * FROM page WHERE page = :page")
     abstract suspend fun getCharactersPage(page: Int): DbCharactersPage
 
-    @Query("SELECT * FROM character WHERE name LIKE :name")
-    abstract suspend fun findCharactersByName(name: String): List<DbCharacter>
+    @Query("SELECT * FROM character WHERE network_id IN (:characterIds)")
+    abstract suspend fun getCharacters(characterIds: List<Long>): List<DbCharacter>
+
+    @Query("SELECT COUNT(*) FROM character WHERE network_id IN (:characterIds)")
+    abstract suspend fun getCharactersCountIn(characterIds: List<Long>): Int
 
     suspend fun insertCharactersPage(charactersPage: DbCharactersPage) {
         val pageId = insertPage(charactersPage.page)
@@ -30,12 +33,12 @@ internal abstract class CharactersDao {
         insertCharactersPageCrossRef(charactersPageCrossRefList)
     }
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract suspend fun insertCharacters(characters: List<DbCharacter>): List<Long>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract suspend fun insertPage(page: DbPage): Long
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract suspend fun insertCharactersPageCrossRef(charactersPageCrossRef: List<DbCharactersPageCrossRef>)
 }

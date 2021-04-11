@@ -7,14 +7,16 @@ import androidx.recyclerview.widget.ListAdapter
 import com.example.citiboxchallenge.databinding.CharacterItemBinding
 import com.example.domain.entities.Character
 
-class CharacterListAdapter : ListAdapter<Character, CharacterListViewHolder>(diffCallback) {
+class CharacterListAdapter(
+    private val onCharacterSelected: (Character) -> Unit
+) : ListAdapter<Character, CharacterListViewHolder>(diffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CharacterListViewHolder {
         val characterItemBinding = CharacterItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return CharacterListViewHolder(characterItemBinding)
     }
 
     override fun onBindViewHolder(holder: CharacterListViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), onCharacterSelected)
     }
 }
 

@@ -10,8 +10,4 @@ class CharactersPaginationManager {
     fun update(data: CharactersPaginationData) {
         this.data = data
     }
-
-    fun setPaginating(isPaginating: Boolean) {
-        data = data.copy(isPaginating = isPaginating)
-    }
 }

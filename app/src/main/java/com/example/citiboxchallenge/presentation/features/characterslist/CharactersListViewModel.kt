@@ -1,8 +1,8 @@
 package com.example.citiboxchallenge.presentation.features.characterslist
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.citiboxchallenge.presentation.router.CharactersRouter
 import com.example.domain.entities.Character
 import com.example.domain.entities.CharactersPage
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,6 +14,7 @@ import kotlin.coroutines.CoroutineContext
 class CharactersListViewModel(
     private val interactors: CharactersListInteractors,
     private val charactersPaginationManager: CharactersPaginationManager,
+    private val router: CharactersRouter,
     private val foregroundDispatcher: CoroutineContext,
     private val backgroundDispatcher: CoroutineContext
 ) : ViewModel() {
@@ -31,9 +32,28 @@ class CharactersListViewModel(
     fun loadNextCharactersPage() {
         with(charactersPaginationManager) {
             val nextPage = data.nextPage
-            if (nextPage != null) {
-                setPaginating(true)
+            if (nextPage != null && _charactersListStateFlow.value != CharactersListState.Loading) {
                 loadCharactersPage(nextPage)
+            }
+        }
+    }
+
+    fun onCharacterSelected(character: Character) {
+        viewModelScope.launch(foregroundDispatcher) {
+            if (_charactersListStateFlow.value != CharactersListState.Loading) {
+                _charactersListStateFlow.emit(CharactersListState.Loading)
+
+                runCatching {
+                    withContext(backgroundDispatcher) {
+                        interactors.getCharacterMeetUp(character)
+                    }
+                }.fold(
+                    onSuccess = { meetUp ->
+                        _charactersListStateFlow.emit(CharactersListState.Ready)
+                        router.navigateToCharactersMeetUp(meetUp)
+                    },
+                    onFailure = { _charactersListStateFlow.emit(CharactersListState.Error) }
+                )
             }
         }
     }
@@ -48,10 +68,7 @@ class CharactersListViewModel(
                 }
             }.fold(
                 onSuccess = { notifyNextCharactersPage(it) },
-                onFailure = {
-                    charactersPaginationManager.setPaginating(false)
-                    _charactersListStateFlow.emit(CharactersListState.Error)
-                }
+                onFailure = { _charactersListStateFlow.emit(CharactersListState.Error) }
             )
         }
     }
@@ -60,7 +77,6 @@ class CharactersListViewModel(
         with(charactersPaginationManager) {
             update(
                 data.copy(
-                    isPaginating = false,
                     currentPage = data.nextPage ?: data.currentPage,
                     nextPage = charactersPage.nextPage
                 )

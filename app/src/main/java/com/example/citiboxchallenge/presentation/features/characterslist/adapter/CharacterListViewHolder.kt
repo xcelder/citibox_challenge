@@ -7,8 +7,9 @@ import com.example.domain.entities.Character
 
 class CharacterListViewHolder(private val binding: CharacterItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(character: Character) {
+    fun bind(character: Character, onCharacterSelected: (Character) -> Unit) {
         with(binding) {
+            characterCard.setOnClickListener { onCharacterSelected(character) }
             name.text = character.name
             speciesAndType.text = "${character.species} ${character.type}"
             Glide.with(itemView.context)

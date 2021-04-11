@@ -12,6 +12,6 @@ internal interface EpisodesDao {
     @Query("SELECT * FROM episode WHERE id IN (:episodesNumber)")
     suspend fun getEpisodesByNumber(episodesNumber: List<Int>): List<DbEpisode>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertEpisodes(episodes: List<DbEpisode>)
 }

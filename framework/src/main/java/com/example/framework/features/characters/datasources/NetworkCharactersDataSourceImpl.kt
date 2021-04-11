@@ -30,13 +30,14 @@ internal class NetworkCharactersDataSourceImpl(
         }
     }
 
-    override suspend fun findCharacterByName(search: String): List<Character> {
-        val response = charactersApi.findCharactersByName(search).awaitResponse()
+    override suspend fun getCharacters(characterIds: List<String>): List<Character> {
+        val characterIdsString = characterIds.joinToString(",")
+        val response = charactersApi.getCharacters(characterIdsString).awaitResponse()
 
         return if (response.isSuccessful) {
             val body = response.body()
-            if (body != null && !body.results.isNullOrEmpty()) {
-                body.results.map { it.toDomainCharacter() }
+            if (body != null && !body.isNullOrEmpty()) {
+                body.map { it.toDomainCharacter() }
             } else {
                 throw IllegalArgumentException("Response does not contains characters data")
             }

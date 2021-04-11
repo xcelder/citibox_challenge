@@ -19,11 +19,13 @@ internal class CharactersRepositoryImpl(
         getFromNetwork = { networkCharactersDataSource.getCharactersPage(page) }
     )
 
-    override suspend fun findCharacterByName(search: String): List<Character> =
-        getDataFirstFromCache(
-            isStored = { inMemoryCharactersDataSource.isSearchStored(search) },
-            getFromCache = { inMemoryCharactersDataSource.findCharactersByName(search) },
-            storeInCache = { inMemoryCharactersDataSource.storeCharactersSearch(search, it) },
-            getFromNetwork = { networkCharactersDataSource.findCharacterByName(search) }
+    override suspend fun getCharacters(characterIds: List<String>): List<Character> {
+        val characterIdsLong = characterIds.mapNotNull { it.toLongOrNull() }
+        return getDataFirstFromCache(
+            isStored = { inMemoryCharactersDataSource.isCharactersStored(characterIdsLong) },
+            getFromCache = { inMemoryCharactersDataSource.getCharacters(characterIdsLong) },
+            storeInCache = { inMemoryCharactersDataSource.storeCharacters(it) },
+            getFromNetwork = { networkCharactersDataSource.getCharacters(characterIds) }
         )
+    }
 }
