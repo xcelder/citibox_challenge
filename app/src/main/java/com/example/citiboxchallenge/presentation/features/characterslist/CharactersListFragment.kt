@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.citiboxchallenge.R
 import com.example.citiboxchallenge.databinding.CharactersListFragmentBinding
 import com.example.citiboxchallenge.presentation.features.characterslist.adapter.CharacterListAdapter
@@ -46,7 +48,15 @@ class CharactersListFragment : Fragment() {
     }
 
     private fun setupViews() {
-        binding.charactersView.adapter = adapter
+        with(binding.charactersView) {
+            adapter = this@CharactersListFragment.adapter
+            addOnScrollListener(onScrollChangeListener)
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.charactersView.clearOnScrollListeners()
     }
 
     private fun startListeningStateChanges() {
@@ -84,5 +94,19 @@ class CharactersListFragment : Fragment() {
             .setMessage(R.string.characters_error_message)
             .setPositiveButton(R.string.positive_button) { dialog, _ -> dialog.dismiss() }
             .show()
+    }
+
+    private val onScrollChangeListener = object : RecyclerView.OnScrollListener() {
+
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            super.onScrollStateChanged(recyclerView, newState)
+
+            val lastVisibleItemPosition = (recyclerView.layoutManager as? LinearLayoutManager)?.findLastVisibleItemPosition()
+            val lastPosition = recyclerView.adapter?.itemCount?.minus(1) ?: -1
+
+            if (lastVisibleItemPosition == lastPosition) {
+                viewModel.loadNextCharactersPage()
+            }
+        }
     }
 }
