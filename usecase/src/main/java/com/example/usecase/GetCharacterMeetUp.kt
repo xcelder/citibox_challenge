@@ -15,32 +15,26 @@ class GetCharacterMeetUp(
     private data class CharacterWithEpisodes(
         val character: Character,
         val matchEpisodesCount: Int,
-        val olderEpisodeTime: Long,
-        val newerEpisodeTime: Long
+        val oldestEpisodeTime: Long,
+        val newestEpisodeTime: Long
     )
 
     private val betterMatchConditions: List<(CharacterWithEpisodes, CharacterWithEpisodes) -> Boolean> =
         listOf(
+            { old, new -> new.matchEpisodesCount > old.matchEpisodesCount },
             { old, new ->
-                new.character.location.url == old.character.location.url &&
-                        new.matchEpisodesCount > old.matchEpisodesCount
+                        new.matchEpisodesCount == old.matchEpisodesCount &&
+                        new.oldestEpisodeTime < old.oldestEpisodeTime
             },
             { old, new ->
-                new.character.location.url == old.character.location.url &&
                         new.matchEpisodesCount == old.matchEpisodesCount &&
-                        new.olderEpisodeTime < old.olderEpisodeTime
+                        new.oldestEpisodeTime == old.oldestEpisodeTime &&
+                        new.newestEpisodeTime < old.newestEpisodeTime
             },
             { old, new ->
-                new.character.location.url == old.character.location.url &&
                         new.matchEpisodesCount == old.matchEpisodesCount &&
-                        new.olderEpisodeTime == old.olderEpisodeTime &&
-                        new.newerEpisodeTime < old.newerEpisodeTime
-            },
-            { old, new ->
-                new.character.location.url == old.character.location.url &&
-                        new.matchEpisodesCount == old.matchEpisodesCount &&
-                        new.olderEpisodeTime == old.olderEpisodeTime &&
-                        new.newerEpisodeTime == old.newerEpisodeTime &&
+                        new.oldestEpisodeTime == old.oldestEpisodeTime &&
+                        new.newestEpisodeTime == old.newestEpisodeTime &&
                         new.character.id < old.character.id
             }
         )
@@ -51,10 +45,17 @@ class GetCharacterMeetUp(
         val characterIds = getCharactersFromEpisodesExcludingCharacter(episodes, character)
 
         val possibleMatchCharacters = charactersRepository.getCharacters(characterIds)
-            .map {
-                val matchEpisodes = episodes.filter { episode -> it.episode.contains(episode.id) }
-                val (olderEpisodeTime, newerEpisodeTime) = matchEpisodes.olderAndNewerTimes
-                CharacterWithEpisodes(it, matchEpisodes.count(), olderEpisodeTime, newerEpisodeTime)
+            .mapNotNull {
+                if (character.location.url == it.location.url) {
+                    val matchEpisodes = episodes.filter { episode -> it.episode.contains(episode.id) }
+                    val (olderEpisodeTime, newerEpisodeTime) = matchEpisodes.oldestAndNewestTimes
+                    CharacterWithEpisodes(
+                        it,
+                        matchEpisodes.count(),
+                        olderEpisodeTime,
+                        newerEpisodeTime
+                    )
+                } else null
             }
             .sortedWith { old, new -> if (betterMatchConditions.any { it(old, new) }) 1 else -1 }
 
@@ -63,8 +64,8 @@ class GetCharacterMeetUp(
                 characters = character to characterMatch.character,
                 location = character.location,
                 episodesTogether = characterMatch.matchEpisodesCount,
-                firstMeet = Date(characterMatch.olderEpisodeTime),
-                lastMeet = Date(characterMatch.newerEpisodeTime)
+                firstMeet = Date(characterMatch.oldestEpisodeTime),
+                lastMeet = Date(characterMatch.newestEpisodeTime)
             )
         }
     }
@@ -82,29 +83,7 @@ class GetCharacterMeetUp(
         }
     }.toList()
 
-    private fun List<CharacterWithEpisodes>.findMatch(character: Character): CharacterWithEpisodes? {
-        var possibleMatch: CharacterWithEpisodes? = null
-
-        forEach { candidate ->
-            val possibleMatchVal = possibleMatch
-            if (candidate.character.location.url == character.location.url) {
-                if (possibleMatchVal == null || betterMatchConditions.any {
-                        it(
-                            possibleMatchVal,
-                            candidate
-                        )
-                    }) {
-                    possibleMatch = candidate
-                } else {
-                    return possibleMatchVal
-                }
-            }
-        }
-
-        return possibleMatch
-    }
-
-    private val List<Episode>.olderAndNewerTimes: Pair<Long, Long>
+    private val List<Episode>.oldestAndNewestTimes: Pair<Long, Long>
         get() {
             var older: Long = Long.MAX_VALUE
             var newer: Long = 0
