@@ -1,4 +1,4 @@
-package com.example.framework.features.characters.policies
+package com.example.framework.features.policies
 
 internal suspend fun <Entity> getDataFirstFromCache(
     isStored: suspend () -> Boolean,
