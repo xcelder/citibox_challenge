@@ -30,31 +30,27 @@ class CharactersListViewModel(
     private val _characters = MutableStateFlow<List<Character>>(emptyList())
 
     fun loadNextCharactersPage() {
-        with(charactersPaginationManager) {
-            val nextPage = data.nextPage
-            if (nextPage != null && _charactersListStateFlow.value != CharactersListState.Loading) {
-                loadCharactersPage(nextPage)
-            }
+        val nextPage = charactersPaginationManager.data.nextPage
+        if (nextPage != null) {
+            loadCharactersPage(nextPage)
         }
     }
 
     fun onCharacterSelected(character: Character) {
         viewModelScope.launch(foregroundDispatcher) {
-            if (_charactersListStateFlow.value != CharactersListState.Loading) {
-                _charactersListStateFlow.emit(CharactersListState.Loading)
+            _charactersListStateFlow.emit(CharactersListState.Loading)
 
-                runCatching {
-                    withContext(backgroundDispatcher) {
-                        interactors.getCharacterMeetUp(character)
-                    }
-                }.fold(
-                    onSuccess = { meetUp ->
-                        _charactersListStateFlow.emit(CharactersListState.Ready)
-                        router.navigateToCharactersMeetUp(meetUp)
-                    },
-                    onFailure = { _charactersListStateFlow.emit(CharactersListState.Error) }
-                )
-            }
+            runCatching {
+                withContext(backgroundDispatcher) {
+                    interactors.getCharacterMeetUp.invoke(character)
+                }
+            }.fold(
+                onSuccess = { meetUp ->
+                    _charactersListStateFlow.emit(CharactersListState.Ready)
+                    router.navigateToCharactersMeetUp(meetUp)
+                },
+                onFailure = { _charactersListStateFlow.emit(CharactersListState.Error) }
+            )
         }
     }
 
@@ -64,7 +60,7 @@ class CharactersListViewModel(
 
             runCatching {
                 withContext(backgroundDispatcher) {
-                    interactors.getCharacters(page)
+                    interactors.getCharacters.invoke(page)
                 }
             }.fold(
                 onSuccess = { notifyNextCharactersPage(it) },

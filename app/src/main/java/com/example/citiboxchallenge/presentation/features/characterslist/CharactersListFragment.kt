@@ -22,9 +22,15 @@ class CharactersListFragment : Fragment() {
 
     private lateinit var binding: CharactersListFragmentBinding
 
-    private val viewModel: CharactersListViewModel by viewModel{ parametersOf(findNavController()) }
+    private val viewModel: CharactersListViewModel by viewModel { parametersOf(findNavController()) }
 
-    private val adapter: CharacterListAdapter by lazy { CharacterListAdapter(viewModel::onCharacterSelected) }
+    private val adapter: CharacterListAdapter by lazy {
+        CharacterListAdapter(onCharacterSelected = {
+            if (viewModel.charactersListStateFlow.value != CharactersListState.Loading) {
+                viewModel.onCharacterSelected(it)
+            }
+        })
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,13 +105,14 @@ class CharactersListFragment : Fragment() {
     private val onScrollChangeListener = object : RecyclerView.OnScrollListener() {
 
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-            super.onScrollStateChanged(recyclerView, newState)
+            if (viewModel.charactersListStateFlow.value != CharactersListState.Loading) {
+                val lastVisibleItemPosition =
+                    (recyclerView.layoutManager as? LinearLayoutManager)?.findLastVisibleItemPosition()
+                val lastPosition = recyclerView.adapter?.itemCount?.minus(1) ?: -1
 
-            val lastVisibleItemPosition = (recyclerView.layoutManager as? LinearLayoutManager)?.findLastVisibleItemPosition()
-            val lastPosition = recyclerView.adapter?.itemCount?.minus(1) ?: -1
-
-            if (lastVisibleItemPosition == lastPosition) {
-                viewModel.loadNextCharactersPage()
+                if (lastVisibleItemPosition == lastPosition) {
+                    viewModel.loadNextCharactersPage()
+                }
             }
         }
     }

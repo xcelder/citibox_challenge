@@ -4,16 +4,15 @@ import com.example.domain.entities.Character
 import com.example.framework.sources.db.daos.CharactersDao
 import com.example.framework.sources.db.entities.DbCharactersPage
 import com.example.framework.sources.db.entities.DbPage
+import io.mockk.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Test
-import org.mockito.kotlin.*
-import kotlin.math.exp
 
 @ExperimentalCoroutinesApi
 class InMemoryCharacterDataSourceImplTest {
 
-    private val charactersDao: CharactersDao = mock()
+    private val charactersDao: CharactersDao = mockk()
 
     private val inMemoryCharacterDataSourceImpl = InMemoryCharacterDataSourceImpl(charactersDao)
 
@@ -23,36 +22,34 @@ class InMemoryCharacterDataSourceImplTest {
             // Given
             val expectedPage = 1
 
-            whenever(charactersDao.getCharactersPage(expectedPage)).thenReturn(DbCharactersPage(
+            coEvery { charactersDao.getCharactersPage(expectedPage) } returns DbCharactersPage(
                 DbPage(page = expectedPage + 1),
                 emptyList()
-            ))
+            )
 
             // When
             inMemoryCharacterDataSourceImpl.getCharactersPage(expectedPage)
 
             // Then
-            verify(charactersDao).getCharactersPage(expectedPage)
+            coVerify { charactersDao.getCharactersPage(expectedPage) }
         }
     }
 
     @Test
-    fun `when storeCharactersPage invokes insertPage and insertCharacters on dao`() {
+    fun `when storeCharactersPage invokes insertCharactersPage on dao with same page`() {
         runBlockingTest {
             // Given
             val expectedPage = 1
 
             val expectedCharacters = emptyList<Character>()
 
-            whenever(charactersDao.insertPage(any())).thenReturn(1)
-            whenever(charactersDao.insertCharacters(any())).thenReturn(listOf(1))
+            coEvery { charactersDao.insertCharactersPage(any()) } just Runs
 
             // When
             inMemoryCharacterDataSourceImpl.storeCharactersPage(expectedPage, expectedCharacters)
 
             // Then
-            verify(charactersDao).insertPage(argThat { page == expectedPage })
-            verify(charactersDao).insertCharacters(argThat { count() == expectedCharacters.count() })
+            coVerify { charactersDao.insertCharactersPage(match { it.page.page == expectedPage }) }
         }
     }
 
@@ -61,12 +58,13 @@ class InMemoryCharacterDataSourceImplTest {
         runBlockingTest {
             // Given
             val expectedCharacters = emptyList<Character>()
+            coEvery { charactersDao.insertCharacters(any()) } returns listOf(1)
 
             // When
             inMemoryCharacterDataSourceImpl.storeCharacters(expectedCharacters)
 
             // Then
-            verify(charactersDao).insertCharacters(argThat { count() == expectedCharacters.count() })
+            coVerify { charactersDao.insertCharacters(match { it.count() == expectedCharacters.count() }) }
         }
     }
 
@@ -75,13 +73,13 @@ class InMemoryCharacterDataSourceImplTest {
         runBlockingTest {
             // Given
             val expectedPage = 1
-            whenever(charactersDao.getPage(expectedPage)).thenReturn(listOf(DbPage(page = expectedPage)))
+            coEvery { charactersDao.getPage(expectedPage) } returns listOf(DbPage(page = expectedPage))
 
             // When
             inMemoryCharacterDataSourceImpl.isCharactersPageStored(expectedPage)
 
             // Then
-            verify(charactersDao).getPage(expectedPage)
+            coVerify { charactersDao.getPage(expectedPage) }
         }
     }
 
@@ -91,13 +89,13 @@ class InMemoryCharacterDataSourceImplTest {
             // Given
             val expectedCharacterIds = emptyList<Long>()
 
-            whenever(charactersDao.getCharactersCountIn(expectedCharacterIds)).thenReturn(1)
+            coEvery { charactersDao.getCharactersCountIn(expectedCharacterIds) } returns 1
 
             // When
             inMemoryCharacterDataSourceImpl.isCharactersStored(expectedCharacterIds)
 
             // Then
-            verify(charactersDao).getCharactersCountIn(expectedCharacterIds)
+            coVerify { charactersDao.getCharactersCountIn(expectedCharacterIds) }
         }
     }
 }

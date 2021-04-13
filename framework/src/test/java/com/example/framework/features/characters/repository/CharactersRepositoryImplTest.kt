@@ -5,17 +5,18 @@ import com.example.data.characters.datasources.NetworkCharactersDataSource
 import com.example.domain.entities.Character
 import com.example.domain.entities.CharactersPage
 import com.example.domain.entities.Location
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Test
-import org.mockito.kotlin.*
-import kotlin.math.exp
 
 @ExperimentalCoroutinesApi
 class CharactersRepositoryImplTest {
 
-    private val inMemoryCharactersDataSource: InMemoryCharactersDataSource = mock()
-    private val networkCharactersDataSource: NetworkCharactersDataSource = mock()
+    private val inMemoryCharactersDataSource: InMemoryCharactersDataSource = mockk(relaxed = true)
+    private val networkCharactersDataSource: NetworkCharactersDataSource = mockk(relaxed = true)
 
     private val charactersRepositoryImpl =
         CharactersRepositoryImpl(inMemoryCharactersDataSource, networkCharactersDataSource)
@@ -26,18 +27,14 @@ class CharactersRepositoryImplTest {
             // given
             val expectedPage = 1
 
-            whenever(inMemoryCharactersDataSource.isCharactersPageStored(expectedPage)).thenReturn(
-                true
-            )
+            coEvery { inMemoryCharactersDataSource.isCharactersPageStored(expectedPage) } returns true
 
             // When
             charactersRepositoryImpl.getCharactersPage(expectedPage)
 
             // Then
-            verify(inMemoryCharactersDataSource).isCharactersPageStored(expectedPage)
-            verify(inMemoryCharactersDataSource).getCharactersPage(expectedPage)
-            verifyNoMoreInteractions(inMemoryCharactersDataSource)
-            verifyNoMoreInteractions(networkCharactersDataSource)
+            coVerify { inMemoryCharactersDataSource.isCharactersPageStored(expectedPage) }
+            coVerify { inMemoryCharactersDataSource.getCharactersPage(expectedPage) }
         }
     }
 
@@ -52,18 +49,16 @@ class CharactersRepositoryImplTest {
                 characters = emptyList()
             )
 
-            whenever(inMemoryCharactersDataSource.isCharactersPageStored(expectedPage)).thenReturn(false)
-            whenever(networkCharactersDataSource.getCharactersPage(expectedPage)).thenReturn(expectedCharactersPage)
+            coEvery { inMemoryCharactersDataSource.isCharactersPageStored(expectedPage) } returns false
+            coEvery { networkCharactersDataSource.getCharactersPage(expectedPage) } returns expectedCharactersPage
 
             // When
             charactersRepositoryImpl.getCharactersPage(expectedPage)
 
             // Then
-            verify(inMemoryCharactersDataSource).isCharactersPageStored(expectedPage)
-            verify(networkCharactersDataSource).getCharactersPage(expectedPage)
-            verify(inMemoryCharactersDataSource).storeCharactersPage(expectedPage, expectedCharactersPage.characters)
-            verifyNoMoreInteractions(inMemoryCharactersDataSource)
-            verifyNoMoreInteractions(networkCharactersDataSource)
+            coVerify { inMemoryCharactersDataSource.isCharactersPageStored(expectedPage) }
+            coVerify { networkCharactersDataSource.getCharactersPage(expectedPage) }
+            coVerify { inMemoryCharactersDataSource.storeCharactersPage(expectedPage, expectedCharactersPage.characters) }
         }
     }
 
@@ -73,16 +68,14 @@ class CharactersRepositoryImplTest {
             // given
             val expectedCharacterIds = listOf("1")
 
-            whenever(inMemoryCharactersDataSource.isCharactersStored(any())).thenReturn(true)
+            coEvery { inMemoryCharactersDataSource.isCharactersStored(any()) } returns true
 
             // When
             charactersRepositoryImpl.getCharacters(expectedCharacterIds)
 
             // Then
-            verify(inMemoryCharactersDataSource).isCharactersStored(any())
-            verify(inMemoryCharactersDataSource).getCharacters(any())
-            verifyNoMoreInteractions(inMemoryCharactersDataSource)
-            verifyNoMoreInteractions(networkCharactersDataSource)
+            coVerify { inMemoryCharactersDataSource.isCharactersStored(any()) }
+            coVerify { inMemoryCharactersDataSource.getCharacters(any()) }
         }
     }
 
@@ -101,18 +94,16 @@ class CharactersRepositoryImplTest {
                 imageUrl = "image url"
             ))
 
-            whenever(inMemoryCharactersDataSource.isCharactersStored(any())).thenReturn(false)
-            whenever(networkCharactersDataSource.getCharacters(expectedCharacterIds)).thenReturn(expectedCharacters)
+            coEvery { inMemoryCharactersDataSource.isCharactersStored(any()) } returns false
+            coEvery { networkCharactersDataSource.getCharacters(expectedCharacterIds) } returns expectedCharacters
 
             // When
             charactersRepositoryImpl.getCharacters(expectedCharacterIds)
 
             // Then
-            verify(inMemoryCharactersDataSource).isCharactersStored(any())
-            verify(networkCharactersDataSource).getCharacters(expectedCharacterIds)
-            verify(inMemoryCharactersDataSource).storeCharacters(expectedCharacters)
-            verifyNoMoreInteractions(inMemoryCharactersDataSource)
-            verifyNoMoreInteractions(networkCharactersDataSource)
+            coVerify { inMemoryCharactersDataSource.isCharactersStored(any()) }
+            coVerify { networkCharactersDataSource.getCharacters(expectedCharacterIds) }
+            coVerify { inMemoryCharactersDataSource.storeCharacters(expectedCharacters) }
         }
     }
 }
