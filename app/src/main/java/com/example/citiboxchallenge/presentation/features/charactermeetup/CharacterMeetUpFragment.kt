@@ -46,8 +46,8 @@ class CharacterMeetUpFragment : Fragment() {
 
             val dateFormat = "MMMM dd, yyyy"
 
-            this@setupViews.firstMeet.text = SimpleDateFormat(dateFormat, Locale.getDefault()).format(firstMeet)
-            this@setupViews.lastMeet.text = SimpleDateFormat(dateFormat, Locale.getDefault()).format(lastMeet)
+            this@setupViews.firstMeet.text = SimpleDateFormat(dateFormat, Locale.ENGLISH).format(firstMeet)
+            this@setupViews.lastMeet.text = SimpleDateFormat(dateFormat, Locale.ENGLISH).format(lastMeet)
         }
     }
 
