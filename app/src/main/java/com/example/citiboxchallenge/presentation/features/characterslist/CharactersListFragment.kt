@@ -22,6 +22,13 @@ class CharactersListFragment : Fragment(), MavericksView {
 
     private val viewModel: CharactersListViewModel by fragmentViewModel()
 
+    private val errorAlert: AlertDialog by lazy {
+        AlertDialog.Builder(requireContext())
+        .setMessage(R.string.characters_error_message)
+        .setPositiveButton(R.string.positive_button) { dialog, _ -> dialog.dismiss() }
+        .show()
+    }
+
     private val adapter: CharacterListAdapter by lazy {
         CharacterListAdapter(onCharacterSelected = {
             withState(viewModel) { state ->
@@ -89,10 +96,7 @@ class CharactersListFragment : Fragment(), MavericksView {
     }
 
     private fun showError() {
-        AlertDialog.Builder(requireContext())
-            .setMessage(R.string.characters_error_message)
-            .setPositiveButton(R.string.positive_button) { dialog, _ -> dialog.dismiss() }
-            .show()
+        if (!errorAlert.isShowing) errorAlert.show()
     }
 
     private val onScrollChangeListener = object : RecyclerView.OnScrollListener() {
