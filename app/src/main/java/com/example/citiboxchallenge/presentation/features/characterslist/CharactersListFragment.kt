@@ -6,28 +6,28 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.mvrx.MavericksView
+import com.airbnb.mvrx.fragmentViewModel
+import com.airbnb.mvrx.withState
 import com.example.citiboxchallenge.R
 import com.example.citiboxchallenge.databinding.CharactersListFragmentBinding
 import com.example.citiboxchallenge.presentation.features.characterslist.adapter.CharacterListAdapter
 import com.example.domain.entities.Character
-import kotlinx.coroutines.flow.collect
-import org.koin.android.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 
-class CharactersListFragment : Fragment() {
+class CharactersListFragment : Fragment(), MavericksView {
 
     private lateinit var binding: CharactersListFragmentBinding
 
-    private val viewModel: CharactersListViewModel by viewModel { parametersOf(findNavController()) }
+    private val viewModel: CharactersListViewModel by fragmentViewModel()
 
     private val adapter: CharacterListAdapter by lazy {
         CharacterListAdapter(onCharacterSelected = {
-            if (viewModel.charactersListStateFlow.value != CharactersListState.Loading) {
-                viewModel.onCharacterSelected(it)
+            withState(viewModel) { state ->
+                if (!state.isLoading) {
+                    viewModel.onCharacterSelected(it)
+                }
             }
         })
     }
@@ -47,8 +47,6 @@ class CharactersListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
         setupViews()
         startListeningStateChanges()
     }
@@ -60,27 +58,22 @@ class CharactersListFragment : Fragment() {
         }
     }
 
+    override fun invalidate() = withState(viewModel) { state ->
+        if (state.isError) showError()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         binding.charactersView.clearOnScrollListeners()
     }
 
     private fun startListeningStateChanges() {
-        lifecycleScope.launchWhenCreated {
-            viewModel.characters.collect(::updateCharactersList)
-        }
-        lifecycleScope.launchWhenCreated {
-            viewModel.charactersListStateFlow.collect(::handleStateUpdate)
-        }
+        viewModel.onEach(CharactersListState::characters) { updateCharactersList(it) }
+        viewModel.onEach(CharactersListState::isLoading) { showLoading(it) }
     }
 
-    private fun handleStateUpdate(state: CharactersListState) = when (state) {
-        CharactersListState.Loading -> showLoading()
-        CharactersListState.Ready -> hideLoading()
-        CharactersListState.Error -> {
-            hideLoading()
-            showError()
-        }
+    private fun showLoading(show: Boolean) {
+        if (show) showLoading() else hideLoading()
     }
 
     private fun updateCharactersList(characters: List<Character>) {
@@ -105,13 +98,15 @@ class CharactersListFragment : Fragment() {
     private val onScrollChangeListener = object : RecyclerView.OnScrollListener() {
 
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-            if (viewModel.charactersListStateFlow.value != CharactersListState.Loading) {
-                val lastVisibleItemPosition =
-                    (recyclerView.layoutManager as? LinearLayoutManager)?.findLastVisibleItemPosition()
-                val lastPosition = recyclerView.adapter?.itemCount?.minus(1) ?: -1
+            withState(viewModel) { state ->
+                if (!state.isLoading) {
+                    val lastVisibleItemPosition =
+                        (recyclerView.layoutManager as? LinearLayoutManager)?.findLastVisibleItemPosition()
+                    val lastPosition = recyclerView.adapter?.itemCount?.minus(1) ?: -1
 
-                if (lastVisibleItemPosition == lastPosition) {
-                    viewModel.loadNextCharactersPage()
+                    if (lastVisibleItemPosition == lastPosition) {
+                        viewModel.loadNextCharactersPage()
+                    }
                 }
             }
         }

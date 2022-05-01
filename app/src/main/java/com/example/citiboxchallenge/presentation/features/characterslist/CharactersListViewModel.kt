@@ -1,33 +1,21 @@
 package com.example.citiboxchallenge.presentation.features.characterslist
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.navigation.fragment.findNavController
+import com.airbnb.mvrx.*
 import com.example.citiboxchallenge.presentation.router.CharactersRouter
 import com.example.domain.entities.Character
 import com.example.domain.entities.CharactersPage
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import com.example.usecase.GetCharacterMeetUp
+import com.example.usecase.GetCharacters
+import com.example.usecase.GetEpisodes
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import kotlin.coroutines.CoroutineContext
+import org.koin.android.ext.android.get
 
 class CharactersListViewModel(
     private val interactors: CharactersListInteractors,
     private val charactersPaginationManager: CharactersPaginationManager,
-    private val router: CharactersRouter,
-    private val foregroundDispatcher: CoroutineContext,
-    private val backgroundDispatcher: CoroutineContext
-) : ViewModel() {
-
-    val charactersListStateFlow: StateFlow<CharactersListState>
-        get() = _charactersListStateFlow
-
-    val characters: StateFlow<List<Character>>
-        get() = _characters
-
-    private val _charactersListStateFlow = MutableStateFlow(CharactersListState.Ready)
-
-    private val _characters = MutableStateFlow<List<Character>>(emptyList())
+    private val router: CharactersRouter
+) : MavericksViewModel<CharactersListState>(CharactersListState()) {
 
     fun loadNextCharactersPage() {
         val nextPage = charactersPaginationManager.data.nextPage
@@ -37,39 +25,39 @@ class CharactersListViewModel(
     }
 
     fun onCharacterSelected(character: Character) {
-        viewModelScope.launch(foregroundDispatcher) {
-            _charactersListStateFlow.emit(CharactersListState.Loading)
+        viewModelScope.launch {
+            setState { copy(isLoading = true) }
 
-            runCatching {
-                withContext(backgroundDispatcher) {
-                    interactors.getCharacterMeetUp.invoke(character)
-                }
-            }.fold(
-                onSuccess = { meetUp ->
-                    _charactersListStateFlow.emit(CharactersListState.Ready)
-                    router.navigateToCharactersMeetUp(meetUp)
-                },
-                onFailure = { _charactersListStateFlow.emit(CharactersListState.Error) }
-            )
+            interactors.getCharacterMeetUp.invoke(character)
+                .fold(
+                    ifLeft = { setState { copy(isLoading = false, isError = true) } },
+                    ifRight = { meetUp ->
+                        setState { copy(isLoading = false, isError = false) }
+                        router.navigateToCharactersMeetUp(meetUp)
+                    }
+                )
         }
     }
 
     private fun loadCharactersPage(page: Int) {
-        viewModelScope.launch(foregroundDispatcher) {
-            _charactersListStateFlow.emit(CharactersListState.Loading)
+        viewModelScope.launch {
+            setState { copy(isLoading = true) }
 
-            runCatching {
-                withContext(backgroundDispatcher) {
-                    interactors.getCharacters.invoke(page)
-                }
-            }.fold(
-                onSuccess = { notifyNextCharactersPage(it) },
-                onFailure = { _charactersListStateFlow.emit(CharactersListState.Error) }
-            )
+            interactors.getCharacters.invoke(page)
+                .tap { notifyNextCharactersPage(it) }
+                .map { it.characters }
+                .fold(
+                    ifLeft = { setState { copy(isLoading = false, isError = true) } },
+                    ifRight = {
+                        setState {
+                            copy(isLoading = false, isError = false, characters = characters + it)
+                        }
+                    }
+                )
         }
     }
 
-    private suspend fun notifyNextCharactersPage(charactersPage: CharactersPage) {
+    private fun notifyNextCharactersPage(charactersPage: CharactersPage) {
         with(charactersPaginationManager) {
             update(
                 data.copy(
@@ -78,9 +66,23 @@ class CharactersListViewModel(
                 )
             )
         }
-        _charactersListStateFlow.emit(CharactersListState.Ready)
-        with(_characters) {
-            emit(value + charactersPage.characters)
+    }
+
+    companion object : MavericksViewModelFactory<CharactersListViewModel, CharactersListState> {
+        override fun create(
+            viewModelContext: ViewModelContext,
+            state: CharactersListState
+        ) = with((viewModelContext as FragmentViewModelContext).fragment) {
+            val interactors = CharactersListInteractors(
+                GetCharacters(get()),
+                GetEpisodes(get()),
+                GetCharacterMeetUp(get(), get())
+            )
+            CharactersListViewModel(
+                interactors = interactors,
+                charactersPaginationManager = CharactersPaginationManager(),
+                router = CharactersRouter(findNavController())
+            )
         }
     }
 }

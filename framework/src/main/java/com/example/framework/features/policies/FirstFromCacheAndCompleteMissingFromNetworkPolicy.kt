@@ -1,22 +1,29 @@
 package com.example.framework.features.policies
 
+import arrow.core.Either
+import arrow.core.flatMap
+import arrow.core.right
+import arrow.core.zip
+import com.example.domain.error.SourceError
+
 internal suspend fun <Entity, Param> getDataFirstFromCacheAndCompleteMissingFromNetwork(
-    getFromCache: suspend () -> Entity,
+    getFromCache: suspend () -> Either<SourceError, Entity>,
     getMissingData: (Entity) -> List<Param>,
     storeInCache: suspend (Entity) -> Unit,
-    getFromNetwork: suspend (List<Param>) -> Entity,
+    getFromNetwork: suspend (List<Param>) -> Either<SourceError, Entity>,
     mergeSources: (Entity, Entity) -> Entity
-): Entity {
-    val dataFromCache = getFromCache()
+): Either<SourceError, Entity> {
+    return getFromCache()
+        .flatMap { dataFromCache ->
+            val missingData = getMissingData(dataFromCache)
 
-    val missingData = getMissingData(dataFromCache)
-    val isCompletelyStored = missingData.isEmpty()
-
-    return if (isCompletelyStored) {
-        dataFromCache
-    } else {
-        val dataFromNetwork = getFromNetwork(missingData)
-        storeInCache(dataFromNetwork)
-        mergeSources(dataFromCache, dataFromNetwork)
-    }
+            if (missingData.isEmpty()) {
+                dataFromCache.right()
+            } else {
+                getFromNetwork(missingData)
+                    .tap { storeInCache(it) }
+                    .zip(dataFromCache.right())
+                    .map { (network, cache) -> mergeSources(cache, network) }
+            }
+        }
 }

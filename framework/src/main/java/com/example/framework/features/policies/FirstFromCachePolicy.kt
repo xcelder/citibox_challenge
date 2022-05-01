@@ -1,13 +1,16 @@
 package com.example.framework.features.policies
 
+import arrow.core.Either
+import com.example.domain.error.SourceError
+
 internal suspend fun <Entity> getDataFirstFromCache(
     isStored: suspend () -> Boolean,
-    getFromCache: suspend () -> Entity,
+    getFromCache: suspend () -> Either<SourceError, Entity>,
     storeInCache: suspend (Entity) -> Unit,
-    getFromNetwork: suspend () -> Entity
+    getFromNetwork: suspend () -> Either<SourceError, Entity>
 ) =
     if (isStored()) {
         getFromCache()
     } else {
-        getFromNetwork().also { storeInCache(it) }
+        getFromNetwork().tap { storeInCache(it) }
     }

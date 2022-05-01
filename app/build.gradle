@@ -7,12 +7,12 @@ plugins {
 apply from: "../gradle_scripts/gradle-dependencies.gradle"
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 32
 
     defaultConfig {
         applicationId "com.example.citiboxchallenge"
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 32
         versionCode 1
         versionName "1.0"
 
@@ -51,7 +51,7 @@ dependencies {
     implementation libraries.coroutines
     implementation libraries.coroutines_android
     implementation libraries.koin_android
-    implementation libraries.koin_viewmodel
+    implementation libraries.mavericks
     implementation libraries.navigation_fragment
     implementation libraries.navigation_ui
     implementation libraries.glide

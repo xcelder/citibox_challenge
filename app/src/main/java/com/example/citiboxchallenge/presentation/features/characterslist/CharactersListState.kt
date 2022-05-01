@@ -1,9 +1,10 @@
 package com.example.citiboxchallenge.presentation.features.characterslist
 
-import com.example.domain.entities.CharactersPage
+import com.airbnb.mvrx.MavericksState
+import com.example.domain.entities.Character
 
-enum class CharactersListState {
-    Loading,
-    Ready,
-    Error
-}
+data class CharactersListState(
+    val isLoading: Boolean = false,
+    val isError: Boolean = false,
+    val characters: List<Character> = emptyList(),
+) : MavericksState

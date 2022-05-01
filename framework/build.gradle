@@ -7,11 +7,11 @@ plugins {
 apply from: "../gradle_scripts/gradle-dependencies.gradle"
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
 
@@ -44,7 +44,7 @@ dependencies {
     implementation libraries.room
     implementation libraries.room_ktx
     kapt libraries.room_compiler
-    api libraries.koin
+    implementation libraries.koin
 
     // Test
     testImplementation testLibraries.junit
