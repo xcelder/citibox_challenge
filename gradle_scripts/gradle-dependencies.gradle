@@ -47,5 +47,6 @@ ext.testLibraries = [
     espresso            : "androidx.test.espresso:espresso-core:${versions.espresso}",
     mockk               : "io.mockk:mockk:${versions.mockk}",
     coroutines_test     : "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.coroutines_test}",
-    turbine             : "app.cash.turbine:turbine:${versions.turbine}"
+    turbine             : "app.cash.turbine:turbine:${versions.turbine}",
+    mavericks_testing   : "com.airbnb.android:mavericks-testing:${versions.mavericks}"
 ]

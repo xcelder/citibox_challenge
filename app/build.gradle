@@ -62,6 +62,7 @@ dependencies {
     testImplementation testLibraries.mockk
     testImplementation testLibraries.coroutines_test
     testImplementation testLibraries.turbine
+    testImplementation testLibraries.mavericks_testing
     androidTestImplementation testLibraries.androidx_junit
     androidTestImplementation testLibraries.espresso
 }

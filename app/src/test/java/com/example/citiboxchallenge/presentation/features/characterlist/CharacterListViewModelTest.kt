@@ -1,5 +1,8 @@
 package com.example.citiboxchallenge.presentation.features.characterlist
 
+import arrow.core.left
+import arrow.core.right
+import com.airbnb.mvrx.test.MvRxTestRule
 import com.example.citiboxchallenge.presentation.features.characterslist.CharactersListInteractors
 import com.example.citiboxchallenge.presentation.features.characterslist.CharactersListState
 import com.example.citiboxchallenge.presentation.features.characterslist.CharactersListViewModel
@@ -9,6 +12,7 @@ import com.example.citiboxchallenge.presentation.router.CharactersRouter
 import com.example.domain.entities.Character
 import com.example.domain.entities.CharactersPage
 import com.example.domain.entities.Location
+import com.example.domain.error.NetworkError
 import com.example.usecase.GetCharacters
 import io.mockk.*
 import junit.framework.TestCase.assertEquals
@@ -17,12 +21,19 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
+import org.junit.ClassRule
 import org.junit.Test
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
 @ExperimentalCoroutinesApi
 class CharacterListViewModelTest {
+
+    companion object {
+        @JvmField
+        @ClassRule
+        val mvrxTestRule = MvRxTestRule()
+    }
 
     private val testDispatcher = TestCoroutineDispatcher()
 
@@ -35,9 +46,7 @@ class CharacterListViewModelTest {
     private val charactersListViewModel = CharactersListViewModel(
         interactors,
         charactersPaginationManager,
-        router,
-        testDispatcher,
-        testDispatcher
+        router
     )
 
     @Test
@@ -65,13 +74,11 @@ class CharacterListViewModelTest {
 
             every { charactersPaginationManager.data } returns expectedData
             every { interactors.getCharacters } returns getCharactersUseCaseMockk
-            coEvery { getCharactersUseCaseMockk.invoke(any()) } returns expectedCharactersPage
+            coEvery { getCharactersUseCaseMockk.invoke(any()) } returns expectedCharactersPage.right()
 
             val stateUpdates = mutableListOf<CharactersListState>()
-            val charactersUpdates = mutableListOf<List<Character>>()
 
-            val stateJob = launch { charactersListViewModel.charactersListStateFlow.toList(stateUpdates) }
-            val charactersJob = launch { charactersListViewModel.characters.toList(charactersUpdates) }
+            val stateJob = launch { charactersListViewModel.stateFlow.toList(stateUpdates) }
 
             // When
             charactersListViewModel.loadNextCharactersPage()
@@ -87,14 +94,14 @@ class CharacterListViewModelTest {
                     })
             }
 
-            assertEquals(CharactersListState.Ready, stateUpdates.first())
-            assertEquals(CharactersListState.Loading, stateUpdates[1])
-            assertEquals(CharactersListState.Ready, stateUpdates.last())
-
-            assertEquals(expectedCharactersPage.characters, charactersUpdates.last())
+            stateUpdates.forEachIndexed { index, state ->
+                when (index) {
+                    1 -> assertEquals(CharactersListState(isLoading = true), state)
+                    2 -> assertEquals(CharactersListState(characters = expectedCharactersPage.characters), state)
+                }
+            }
 
             stateJob.cancel()
-            charactersJob.cancel()
         }
     }
 
@@ -123,13 +130,11 @@ class CharacterListViewModelTest {
 
             every { charactersPaginationManager.data } returns expectedData
             every { interactors.getCharacters } returns getCharactersUseCaseMockk
-            coEvery { getCharactersUseCaseMockk.invoke(any()) } returns expectedCharactersPage
+            coEvery { getCharactersUseCaseMockk.invoke(any()) } returns expectedCharactersPage.right()
 
             val stateUpdates = mutableListOf<CharactersListState>()
-            val charactersUpdates = mutableListOf<List<Character>>()
 
-            val stateJob = launch { charactersListViewModel.charactersListStateFlow.toList(stateUpdates) }
-            val charactersJob = launch { charactersListViewModel.characters.toList(charactersUpdates) }
+            val stateJob = launch { charactersListViewModel.stateFlow.toList(stateUpdates) }
 
             // When
             charactersListViewModel.loadNextCharactersPage()
@@ -141,10 +146,7 @@ class CharacterListViewModelTest {
 
             assertEquals(1, stateUpdates.count())
 
-            assertEquals(1, charactersUpdates.count())
-
             stateJob.cancel()
-            charactersJob.cancel()
         }
     }
 
@@ -157,13 +159,11 @@ class CharacterListViewModelTest {
 
             every { charactersPaginationManager.data } returns expectedData
             every { interactors.getCharacters } returns getCharactersUseCaseMockk
-            coEvery { getCharactersUseCaseMockk.invoke(any()) } throws IllegalArgumentException("error")
+            coEvery { getCharactersUseCaseMockk.invoke(any()) } returns NetworkError.left()
 
             val stateUpdates = mutableListOf<CharactersListState>()
-            val charactersUpdates = mutableListOf<List<Character>>()
 
-            val stateJob = launch { charactersListViewModel.charactersListStateFlow.toList(stateUpdates) }
-            val charactersJob = launch { charactersListViewModel.characters.toList(charactersUpdates) }
+            val stateJob = launch { charactersListViewModel.stateFlow.toList(stateUpdates) }
 
             // When
             charactersListViewModel.loadNextCharactersPage()
@@ -173,14 +173,14 @@ class CharacterListViewModelTest {
 
             verify(exactly = 0) { charactersPaginationManager.update(any()) }
 
-            assertEquals(CharactersListState.Ready, stateUpdates.first())
-            assertEquals(CharactersListState.Loading, stateUpdates[1])
-            assertEquals(CharactersListState.Error, stateUpdates.last())
-
-            assertEquals(1, charactersUpdates.count())
+            stateUpdates.forEachIndexed { index, state ->
+                when (index) {
+                    1 -> assertEquals(CharactersListState(isLoading = true), state)
+                    2 -> assertEquals(CharactersListState(isError = true), state)
+                }
+            }
 
             stateJob.cancel()
-            charactersJob.cancel()
         }
     }
 }
