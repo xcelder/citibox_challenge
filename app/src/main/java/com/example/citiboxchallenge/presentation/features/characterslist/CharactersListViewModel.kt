@@ -1,15 +1,16 @@
 package com.example.citiboxchallenge.presentation.features.characterslist
 
 import androidx.navigation.fragment.findNavController
-import com.airbnb.mvrx.*
+import com.airbnb.mvrx.FragmentViewModelContext
+import com.airbnb.mvrx.MavericksViewModel
+import com.airbnb.mvrx.MavericksViewModelFactory
+import com.airbnb.mvrx.ViewModelContext
 import com.example.citiboxchallenge.presentation.router.CharactersRouter
 import com.example.domain.entities.Character
 import com.example.domain.entities.CharactersPage
-import com.example.usecase.GetCharacterMeetUp
-import com.example.usecase.GetCharacters
-import com.example.usecase.GetEpisodes
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
+import org.koin.core.parameter.parametersOf
 
 class CharactersListViewModel(
     private val interactors: CharactersListInteractors,
@@ -73,16 +74,9 @@ class CharactersListViewModel(
             viewModelContext: ViewModelContext,
             state: CharactersListState
         ) = with((viewModelContext as FragmentViewModelContext).fragment) {
-            val interactors = CharactersListInteractors(
-                GetCharacters(get()),
-                GetEpisodes(get()),
-                GetCharacterMeetUp(get(), get())
-            )
-            CharactersListViewModel(
-                interactors = interactors,
-                charactersPaginationManager = CharactersPaginationManager(),
-                router = CharactersRouter(findNavController())
-            )
+            val navController = runCatching { findNavController() }.getOrNull()
+            val viewModel: CharactersListViewModel by inject { parametersOf(navController) }
+            viewModel
         }
     }
 }

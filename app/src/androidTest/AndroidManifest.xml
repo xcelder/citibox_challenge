@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.citiboxchallenge">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <application
+        android:name=".InstrumentedApplication"
+        android:allowBackup="true"
+        android:label="TestApp"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppCompat"/>
+</manifest>

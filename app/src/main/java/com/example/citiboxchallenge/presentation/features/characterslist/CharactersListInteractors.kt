@@ -6,6 +6,5 @@ import com.example.usecase.GetEpisodes
 
 data class CharactersListInteractors(
     val getCharacters: GetCharacters,
-    val getEpisodes: GetEpisodes,
     val getCharacterMeetUp: GetCharacterMeetUp
 )

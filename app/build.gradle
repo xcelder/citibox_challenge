@@ -16,7 +16,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.example.citiboxchallenge.utils.CustomRunner"
     }
 
     buildFeatures {
@@ -38,6 +38,10 @@ android {
     }
     packagingOptions {
         exclude "DebugProbesKt.bin"
+        exclude "META-INF/*"
+    }
+    testOptions {
+        animationsDisabled = true
     }
 }
 
@@ -63,6 +67,12 @@ dependencies {
     testImplementation testLibraries.coroutines_test
     testImplementation testLibraries.turbine
     testImplementation testLibraries.mavericks_testing
+    androidTestImplementation libraries.material
     androidTestImplementation testLibraries.androidx_junit
     androidTestImplementation testLibraries.espresso
+    androidTestImplementation testLibraries.espresso_contrib
+    debugImplementation testLibraries.mavericks_testing
+    androidTestImplementation testLibraries.mockk_android
+    debugImplementation testLibraries.fragment_testing
+    androidTestImplementation testLibraries.navigation_test
 }

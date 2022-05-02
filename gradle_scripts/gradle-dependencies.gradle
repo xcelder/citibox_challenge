@@ -12,11 +12,13 @@ ext.versions = [
     junit           : "4.+",
     androidx_junit  : "1.1.2",
     espresso        : "3.3.0",
-    mockk           : "1.9.3",
+    mockk           : "1.12.3",
     coroutines_test : "1.4.3",
     turbine         : "0.4.1",
     mavericks       : "2.6.1",
-    arrow           : "1.0.1"
+    arrow           : "1.0.1",
+    fragment_testing: "1.4.1",
+    navigation_test : "2.3.4"
 ]
 
 ext.libraries = [
@@ -45,8 +47,12 @@ ext.testLibraries = [
     junit               : "junit:junit:${versions.junit}",
     androidx_junit      : "androidx.test.ext:junit:${versions.androidx_junit}",
     espresso            : "androidx.test.espresso:espresso-core:${versions.espresso}",
+    espresso_contrib    : "androidx.test.espresso:espresso-contrib:${versions.espresso}",
     mockk               : "io.mockk:mockk:${versions.mockk}",
+    mockk_android       : "io.mockk:mockk-android:${versions.mockk}",
     coroutines_test     : "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.coroutines_test}",
     turbine             : "app.cash.turbine:turbine:${versions.turbine}",
-    mavericks_testing   : "com.airbnb.android:mavericks-testing:${versions.mavericks}"
+    mavericks_testing   : "com.airbnb.android:mavericks-testing:${versions.mavericks}",
+    fragment_testing    : "androidx.fragment:fragment-testing:${versions.fragment_testing}",
+    navigation_test     : "androidx.navigation:navigation-testing:${versions.navigation_test}"
 ]

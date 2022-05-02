@@ -2,6 +2,7 @@ package com.example.citiboxchallenge
 
 import android.app.Application
 import com.airbnb.mvrx.Mavericks
+import com.example.citiboxchallenge.presentation.di.viewModelModule
 import com.example.framework.di.dataSourceModule
 import com.example.framework.di.dbModule
 import com.example.framework.di.networkModule
@@ -21,7 +22,7 @@ class MainApplication : Application() {
         startKoin {
             androidLogger(if (BuildConfig.DEBUG) Level.ERROR else Level.NONE)
             androidContext(this@MainApplication)
-            modules(dbModule, networkModule, dataSourceModule, repositoryModule)
+            modules(viewModelModule, dbModule, networkModule, dataSourceModule, repositoryModule)
         }
     }
 }
